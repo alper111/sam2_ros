@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.10
+#!/usr/bin/env python
 import os
 
 import rospy
@@ -8,15 +8,18 @@ from cv_bridge import CvBridge
 from sam2_ros.srv import Segment, SegmentRequest, SegmentResponse
 import numpy as np
 import torch
+import sam2
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 
 
 if __name__ == "__main__":
-    checkpoint = "/docker/sam2/checkpoints/sam2.1_hiera_large.pt"
+    package_path = os.path.dirname(sam2.__file__)
+    path = os.path.dirname(package_path)
+    checkpoint = os.path.join(path, "checkpoints/sam2.1_hiera_large.pt")
     if not os.path.exists(checkpoint):
         cwd = os.getcwd()
-        os.chdir("/docker/sam2/checkpoints")
+        os.chdir(os.path.join(path, "checkpoints"))
         os.system("./download_ckpts.sh")
         os.chdir(cwd)
     model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
